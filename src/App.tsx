@@ -1,10 +1,11 @@
-import './App.scss'
+import './styles/App.scss'
+import Title from './components/Title'
 
 function App() {
 
   return (
     <>
-    <h2 className = 'title'>Hello!</h2>
+    <Title />
 
     </>
   )
