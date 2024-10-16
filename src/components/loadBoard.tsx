@@ -1,101 +1,118 @@
-import { ReactElement, useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import GameName from "./GameName";
 import FleetChoices from "./FleetChoices";
+import UserContext from "../context/UserContext";
+import generateBoardGrid from "./generateBoardGrid";
+import {PlaceFleet} from "./PlaceFleet";
 
-const loadBoard = (player: string) => {
-  // create board
-  const mainContainer = document.querySelector(
-    ".main-page-container"
-  ) as HTMLElement;
-  const imgContainer = document.querySelector(
-    ".main-page-image-container"
-  ) as HTMLElement;
-  const choicesContainer = document.querySelector(
-    ".main-page-choices-container"
-  ) as HTMLElement;
-  const titleContainer = document.querySelector(
-    ".main-page-title-container"
-  ) as HTMLElement;
-  const titleLetters = document.querySelectorAll(
-    ".letters"
-  ) as NodeListOf<HTMLElement>;
+const LoadBoard = () => {
+  const context = useContext(UserContext);
+    if (!context) {
+    return <div id="load-board">Loading the board...</div>;
+  }
+  const {
+    blockSize,
+    setBlockSize,
+    isVertical,
+    setIsVertical,
+    tickedShip,
+    setTickedShip,
+    playerTile,
+    setPlayerTile,
+    tileCount,
+    setTileCount,
+  } = context;
+  const [pageReady, setPageReady] = useState(false);
 
-  // setTimeout(() => {
-  imgContainer.remove();
-  choicesContainer.remove();
-  // titleContainer.style.display = "block";
-  titleContainer.style.animation =
-    "move-title-container 1000ms linear forwards";
-  titleLetters.forEach(
-    (letter) => (letter.style.animation = "move-letters 1000ms linear forwards")
-  );
-  mainContainer.style.flexDirection = "row";
-  mainContainer.style.alignItems = "stretch";
-  // }, 1000);
+  useEffect(() => {
+    if (pageReady) {
+      // create board
+      const mainContainer = document.querySelector(
+        ".main-page-container"
+      ) as HTMLElement;
+      const imgContainer = document.querySelector(
+        ".main-page-image-container"
+      ) as HTMLElement;
+      const choicesContainer = document.querySelector(
+        ".main-page-choices-container"
+      ) as HTMLElement;
+      const titleContainer = document.querySelector(
+        ".main-page-title-container"
+      ) as HTMLElement;
+      const titleLetters = document.querySelectorAll(
+        ".letters"
+      ) as NodeListOf<HTMLElement>;
 
-  imgContainer.style.animation = "fade-out 1000ms linear forwards";
-  choicesContainer.style.animation = "fade-out 1000ms linear forwards";
+      // setTimeout(() => {
+      if (imgContainer && choicesContainer && titleContainer) {
+        imgContainer.style.animation = "fade-out 1000ms linear forwards";
+        choicesContainer.style.animation = "fade-out 1000ms linear forwards";
+        setTimeout(() => {
+          imgContainer.remove();
+          choicesContainer.remove();
+        }, 1000);
 
-  // creating container to contain all other information (e.g. title, fleets, buttons) and append to main page
-  const infoContainerDiv: HTMLDivElement = document.createElement("div");
-  infoContainerDiv.className = "info-container";
-  mainContainer.append(infoContainerDiv);
-  const infoContainer = document.querySelector(
-    ".info-container"
-  ) as HTMLElement;
-  infoContainer.append(titleContainer);
+        titleContainer.style.animation =
+          "move-title-container 1000ms linear forwards";
+        titleLetters.forEach(
+          (letter) =>
+            (letter.style.animation = "move-letters 1000ms linear forwards")
+        );
+      }
+      if (mainContainer) {
+        mainContainer.style.flexDirection = "row";
+        mainContainer.style.alignItems = "stretch";
+      }
 
-  // Setting up the board game
-  const boardElement: HTMLDivElement = document.createElement("div");
-  mainContainer.append(boardElement);
-  boardElement.classList.add("boardgame-container");
+      // creating container that will contain all other information (e.g. title, fleets, buttons) and append to main page
 
-  // Setting up top player
-  const topContainerElement: HTMLDivElement = document.createElement("div");
-  const bottomContainerElement: HTMLDivElement = document.createElement("div");
-  const boardGameContainer = document.querySelector(
-    ".boardgame-container"
-  ) as HTMLElement;
-  boardGameContainer.append(topContainerElement);
-  boardGameContainer.append(bottomContainerElement);
-  topContainerElement.className = "top-container";
-  bottomContainerElement.className = "bottom-container";
-  const topBoardContainer = document.querySelector(
-    ".top-container"
-  ) as HTMLElement;
-  const bottomBoardContainer = document.querySelector(
-    ".bottom-container"
-  ) as HTMLElement;
+      const infoContainerDiv: HTMLDivElement = document.createElement("div");
+      infoContainerDiv.className = "info-container";
+      mainContainer.append(infoContainerDiv);
+      infoContainerDiv.append(titleContainer);
 
-  // Setting up the tiles
-  const createTiles = (playerSide: string, side: HTMLElement): void => {
-    for (let i = 1; i <= 100; i++) {
-      const block: HTMLDivElement = document.createElement("div");
-      block.className = `block ` + `${playerSide}${i}`;
-      block.id = `${playerSide}${i}`;
-      side.append(block);
+      const root = ReactDOM.createRoot(infoContainerDiv);
+      root.render(
+        <>
+          <GameName value="game" />
+          <FleetChoices
+            blockSize={blockSize}
+            setBlockSize={setBlockSize}
+            isVertical={isVertical}
+            setIsVertical={setIsVertical}
+            tickedShip={tickedShip}
+            setTickedShip={setTickedShip}
+            tileCount={tileCount}
+            setTileCount={setTileCount}
+          />
+          {generateBoardGrid(tickedShip, tileCount, isVertical)}
+          <PlaceFleet
+            isVertical={isVertical}
+            setIsVertical={setIsVertical}
+            playerTile={playerTile}
+            setPlayerTile={setPlayerTile}
+            tickedShip={tickedShip}
+            setTickedShip={setTickedShip}
+            tileCount={tileCount}
+            setTileCount={setTileCount}
+          />
+        </>
+      );
+
+      return () => {root.unmount();
+      infoContainerDiv.remove();
+      };
     }
-  };
+  }, [pageReady]);
 
-  createTiles("top-side", topBoardContainer);
-  createTiles("bottom-side", bottomBoardContainer);
+  useEffect(() => {
+    setPageReady(true);
+  }, []);
 
-  interface Props {
-    value: "main" | "game";
-  }
 
-  const ShowFleet = (): JSX.Element => (
-    <>
-      <GameName value="game" />
-      <FleetChoices />
-    </>
-  );
 
-  const root = ReactDOM.createRoot(infoContainer);
-  if (infoContainer) {
-    root.render(<ShowFleet />);
-  }
+  return null;
 };
 
-export default loadBoard;
+export default LoadBoard;

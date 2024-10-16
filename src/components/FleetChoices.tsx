@@ -1,32 +1,68 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
-import UserContext from "../context/UserContext";
+import { useState, useRef, useEffect } from "react";
+import UserContext, { UserContextType } from "../context/UserContext";
 
-const FleetChoices = (): JSX.Element => {
+// interface FleetChoicesProps {
+//   numberOfPlayers: string;
+//   setNumberOfPlayers: Dispatch<SetStateAction<string>>;
+//   blockSize: { width: number; height: number };
+//   setBlockSize?: Dispatch<SetStateAction<{ width: number; height: number }>>;
+//   degree: number;
+//   setDegree?: Dispatch<SetStateAction<number>>;
+// }
+
+const FleetChoices = ({
+  blockSize,
+  setBlockSize,
+  isVertical,
+  setIsVertical,
+  tickedShip,
+  setTickedShip,
+  tileCount,
+  setTileCount,
+}: Pick<
+  UserContextType,
+  | "blockSize"
+  | "setBlockSize"
+  | "isVertical"
+  | "setIsVertical"
+  | "tickedShip"
+  | "setTickedShip"
+  | "tileCount"
+  | "setTileCount"
+>): JSX.Element => {
   const [imagePath, setImagePath] = useState<string | undefined>("");
   const [imageClass, setImageClass] = useState<string | undefined>("");
-  const [deg, setDeg] = useState<number | 0>(0);
-  const context = useContext(UserContext);
-  const blockSize = context?.blockSize;
-  const setBlockSize = context?.setBlockSize;
+
   const imageRef = useRef<HTMLImageElement>(null);
   const destroyerRef = useRef<HTMLDivElement>(null);
   const submarineRef = useRef<HTMLDivElement>(null);
   const cruiserRef = useRef<HTMLDivElement>(null);
   const battleshipRef = useRef<HTMLDivElement>(null);
   const carrierRef = useRef<HTMLDivElement>(null);
+  const rotateBtn = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+      console.log('fleetChoices ship, count, vertical = ', tickedShip, tileCount, isVertical)
+
+      }, [tickedShip, isVertical, tileCount, setTickedShip, setIsVertical])
 
   useEffect(() => {
     window.addEventListener("resize", handleSize);
-    console.log(blockSize);
-
+    if (blockSize !== undefined) {
+    }
     return () => {
       window.removeEventListener("resize", handleSize);
     };
-  }, [setBlockSize]);
+  }, [blockSize]);
 
   function handleSize() {
     const el = document.querySelector("#top-side1") as HTMLElement;
-
+    // console.log(
+    //   "under handleSize, width: ",
+    //   el.offsetWidth,
+    //   "height: ",
+    //   el.offsetHeight
+    // );
     if (el && setBlockSize) {
       setBlockSize({ width: el.offsetWidth, height: el.offsetHeight });
     }
@@ -37,33 +73,164 @@ const FleetChoices = (): JSX.Element => {
     setImageClass(`${ship}-img ship-images`);
   }
 
-  function handleClick(ship: string) {
-    console.log("handle click", ship);
+  function clickedShip(ship: string) {
+    setTickedShip(ship);
+    console.log('clickedship',ship)
+    switch (ship) {
+      case "destroyer":
+        if (destroyerRef.current) {
+          destroyerRef.current.style.color = "tomato";
+          setTileCount(2);
+        }
+        break;
+      case "submarine":
+        if (submarineRef.current) {
+          submarineRef.current.style.color = "tomato";
+          setTileCount(3);
+        }
+        break;
+      case "cruiser":
+        if (cruiserRef.current) {
+          cruiserRef.current.style.color = "tomato";
+          setTileCount(3);
+        }
+        break;
+      case "battleship":
+        if (battleshipRef.current) {
+          battleshipRef.current.style.color = "tomato";
+          setTileCount(4);
+        }
+        break;
+      case "carrier":
+        if (carrierRef.current) {
+          carrierRef.current.style.color = "tomato";
+          setTileCount(5);
+        }
+        break;
+      default:
+        break;
+    }
   }
 
-  function handleFlip(deg: number) {
-    if (deg === 270) {
-      setDeg(deg - 270);
-    } else {
-      setDeg(270);
-    }
+  function handleRotate() {
+    console.log(imageRef.current);
     if (imageRef.current) {
-      imageRef.current.style.transform = `rotate(${deg}deg)`;
+      setIsVertical((prev) => {
+        const newIsVertical = !prev;
+        if (imageRef.current) {
+          imageRef.current.style.transform = newIsVertical
+            ? "rotate(270deg)"
+            : "rotate(0deg)";
+        }
+        return newIsVertical;
+      });
+      if (rotateBtn.current) {
+        rotateBtn.current.style.transform = "scale(1)";
+      }
+      setTimeout(() => {
+        if (rotateBtn.current) {
+          rotateBtn.current.style.transform = "scale(1.2)";
+        }
+      }, 100);
     }
   }
 
   useEffect(() => {
-    let element = document.querySelector(".block");
-    if (element && setBlockSize) {
+    let element = document.querySelector(".tile");
+    if (element) {
       let rect = element?.getBoundingClientRect();
       setBlockSize({ width: rect.width, height: rect.height });
     }
-  }, [setBlockSize]);
+    console.log('useeffect tickedship - ', tickedShip);
+  }, [tickedShip, setTickedShip]);
+
+  // function handleDragStart(event: React.DragEvent<HTMLImageElement>) {
+  //   const customImage = document.createElement("img");
+  //   let element = document.querySelector(".tile");
+  //   if (element) {
+  //     console.log("isVertical in handledragstart = ", isVertical);
+  //     let rect = element.getBoundingClientRect();
+  //     customImage.src = `../images/${tickedShip}.png`;
+  //     if (isVertical) {
+  //       customImage.style.width = `${rect.width * tileCount - 8}px`;
+  //       customImage.style.height = `${rect.height - 8}px`;
+  //       customImage.style.transform = `rotate(0deg)`;
+  //     } else {
+  //       customImage.style.width = `${rect.width - 8}px`;
+  //       customImage.style.height = `${rect.height * tileCount - 8}px`;
+  //       customImage.style.transform = `rotate(270deg)`;
+  //     }
+
+  //     setBlockSize({ width: rect.width, height: rect.height });
+  //     if (event.dataTransfer) {
+  //       event.dataTransfer.setDragImage(customImage, 10, 10);
+  //     }
+  //     customImage.style.transform = isVertical
+  //       ? "rotate(270deg)"
+  //       : "rotate(0deg)";
+  //     document.body.appendChild(customImage);
+  //   }
+  // }
+
+  function handleDragStart(event: React.DragEvent<HTMLImageElement>) {
+    const imageElement = document.querySelector(
+      ".ship-images"
+    ) as HTMLImageElement;
+
+    if (imageElement) {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+
+      let width: number;
+      let height: number;
+
+      const customImage = new Image();
+      customImage.src = `../images/${tickedShip}.png`;
+
+      customImage.onload = function () {
+        if (isVertical) {
+          width = imageElement.naturalWidth;
+          height = imageElement.naturalHeight * tileCount;
+        } else {
+          width = imageElement.naturalWidth * tileCount;
+          height = imageElement.naturalHeight;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        if (context) {
+          if (isVertical) {
+            context.drawImage(imageElement, 0, 0, width, height);
+          } else {
+            context.translate(width / 2, height / 2);
+            context.rotate((270 * Math.PI) / 180);
+            context.drawImage(
+              imageElement,
+              -height / 2,
+              -width / 2,
+              height,
+              width
+            );
+          }
+        }
+        if (event.dataTransfer) {
+          event.dataTransfer.setDragImage(canvas, width / 4, height / 4);
+        }
+      };
+    }
+  }
+
+  useEffect(() => {
+    console.log("updated tickedship", tickedShip);
+  },[tickedShip, setTickedShip]);
+  
 
   return (
     <>
       <div className="fleet-info">
-        Drag and place all five ships onto the game board.
+        Click on a ship name and drag and place all five ships onto the bottom
+        part of the game board.
       </div>
       <div className="fleet-container">
         <div className="fleet-name-container">
@@ -71,7 +238,7 @@ const FleetChoices = (): JSX.Element => {
             <div
               ref={destroyerRef}
               className="destroyer ship-name"
-              onClick={() => handleClick("destroyer")}
+              onClick={() => clickedShip("destroyer")}
               onMouseOver={() => handleShipHover("destroyer")}
             >
               Destroyer
@@ -83,7 +250,7 @@ const FleetChoices = (): JSX.Element => {
             <div
               ref={submarineRef}
               className="submarine ship-name"
-              onClick={() => handleClick("submarine")}
+              onClick={() => clickedShip("submarine")}
               onMouseOver={() => handleShipHover("submarine")}
             >
               Submarine
@@ -95,7 +262,7 @@ const FleetChoices = (): JSX.Element => {
             <div
               ref={cruiserRef}
               className="cruiser ship-name"
-              onClick={() => handleClick("cruiser")}
+              onClick={() => clickedShip("cruiser")}
               onMouseOver={() => handleShipHover("cruiser")}
             >
               Cruiser
@@ -107,7 +274,7 @@ const FleetChoices = (): JSX.Element => {
             <div
               ref={battleshipRef}
               className="battleship ship-name"
-              onClick={() => handleClick("battleship")}
+              onClick={() => clickedShip("battleship")}
               onMouseOver={() => handleShipHover("battleship")}
             >
               Battleship
@@ -119,7 +286,7 @@ const FleetChoices = (): JSX.Element => {
             <div
               ref={carrierRef}
               className="carrier ship-name"
-              onClick={() => handleClick("carrier")}
+              onClick={() => clickedShip("carrier")}
               onMouseOver={() => handleShipHover("carrier")}
             >
               Carrier
@@ -130,13 +297,15 @@ const FleetChoices = (): JSX.Element => {
         <div className="image-btn-container">
           <div className="ship-image-container">
             <img
+              id={tickedShip}
               ref={imageRef}
               className={imageClass}
-              src={imagePath}
+              src={imagePath ? imagePath : `../images/destroyer.png`}
+              onDragStart={(event) => handleDragStart(event)}
               draggable
             />
           </div>
-          <button className="flip-btn" onClick={() => handleFlip(deg)}>
+          <button ref={rotateBtn} className="rotate-btn" onClick={handleRotate}>
             Rotate Ship
           </button>
         </div>

@@ -7,7 +7,9 @@ interface Props {
 const GameName: React.FC<Props> = ({ value }) => {
   const correctClass =
     value === "main" ? "main-page-title-container" : value=== "game" ? "game-page-title-container" : undefined;
-
+if (value === "game") {
+  console.log('you are now in game page')
+}
   return (
     <div className={correctClass}>
       <span className="title-battle-container">

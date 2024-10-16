@@ -211,6 +211,7 @@ $tile-height: calc(100% / $row);
         height: 70%;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         align-items: center;
 
         .ship-image-container {
@@ -378,21 +379,23 @@ $tile-height: calc(100% / $row);
       height: 50%;
       display: flex;
       flex-wrap: wrap;
-      border: 5px solid bisque;
-      background: rgb(12, 158, 232);
+      border: 5px solid hsl(0, 1%, 37%);
     }
 
     .top-container {
-      border-bottom: 6px solid bisque;
+      border-bottom: 6px solid hsl(39, 70%, 90%);
+      background-color: hsl(0, 48%, 69%);
     }
 
     .bottom-container {
-      border-top: 6px solid bisque;
+      border-top: 6px solid hsl(0, 48%, 69%);
+      background-color: hsl(39, 70%, 90%);
     }
-    .block {
+
+    .tile {
       width: $tile-width;
       height: $tile-height;
-      border: 1px dotted lightgray;
+      border: 1px dotted black;
     }
   }
 
@@ -416,7 +419,7 @@ $tile-height: calc(100% / $row);
 
       .ship-images {
         opacity: 1;
-        // height: 70%;
+        height: 50%;
 
         &:hover {
           opacity: 0.6;
