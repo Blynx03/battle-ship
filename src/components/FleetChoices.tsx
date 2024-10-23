@@ -1,35 +1,12 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import UserContext, { UserContextType } from "../context/UserContext";
 
-// interface FleetChoicesProps {
-//   numberOfPlayers: string;
-//   setNumberOfPlayers: Dispatch<SetStateAction<string>>;
-//   blockSize: { width: number; height: number };
-//   setBlockSize?: Dispatch<SetStateAction<{ width: number; height: number }>>;
-//   degree: number;
-//   setDegree?: Dispatch<SetStateAction<number>>;
-// }
 
-const FleetChoices = ({
-  blockSize,
-  setBlockSize,
-  isVertical,
-  setIsVertical,
-  tickedShip,
-  setTickedShip,
-  tileCount,
-  setTileCount,
-}: Pick<
-  UserContextType,
-  | "blockSize"
-  | "setBlockSize"
-  | "isVertical"
-  | "setIsVertical"
-  | "tickedShip"
-  | "setTickedShip"
-  | "tileCount"
-  | "setTileCount"
->): JSX.Element => {
+const FleetChoices = (): JSX.Element => {
+  const context = useContext(UserContext) as UserContextType;
+
+  const {blockSize, setBlockSize, isVertical, setIsVertical, tickedShip, setTickedShip, tileCount, setTileCount} = context;
+
   const [imagePath, setImagePath] = useState<string | undefined>("");
   const [imageClass, setImageClass] = useState<string | undefined>("");
 
@@ -40,11 +17,6 @@ const FleetChoices = ({
   const battleshipRef = useRef<HTMLDivElement>(null);
   const carrierRef = useRef<HTMLDivElement>(null);
   const rotateBtn = useRef<HTMLButtonElement>(null);
-
-    useEffect(() => {
-      console.log('fleetChoices ship, count, vertical = ', tickedShip, tileCount, isVertical)
-
-      }, [tickedShip, isVertical, tileCount, setTickedShip, setIsVertical])
 
   useEffect(() => {
     window.addEventListener("resize", handleSize);
@@ -75,7 +47,6 @@ const FleetChoices = ({
 
   function clickedShip(ship: string) {
     setTickedShip(ship);
-    console.log('clickedship',ship)
     switch (ship) {
       case "destroyer":
         if (destroyerRef.current) {
@@ -112,13 +83,14 @@ const FleetChoices = ({
     }
   }
 
-  function handleRotate() {
+  function handleRotate(e: EventTarget) {
+    console.log('e =', e)
     console.log(imageRef.current);
     if (imageRef.current) {
       setIsVertical((prev) => {
         const newIsVertical = !prev;
         if (imageRef.current) {
-          imageRef.current.style.transform = newIsVertical
+        imageRef.current.style.transform = newIsVertical
             ? "rotate(270deg)"
             : "rotate(0deg)";
         }
@@ -141,7 +113,6 @@ const FleetChoices = ({
       let rect = element?.getBoundingClientRect();
       setBlockSize({ width: rect.width, height: rect.height });
     }
-    console.log('useeffect tickedship - ', tickedShip);
   }, [tickedShip, setTickedShip]);
 
   // function handleDragStart(event: React.DragEvent<HTMLImageElement>) {
@@ -189,15 +160,15 @@ const FleetChoices = ({
 
       customImage.onload = function () {
         if (isVertical) {
-          width = imageElement.naturalWidth;
-          height = imageElement.naturalHeight * tileCount;
+          canvas.width = imageElement.naturalWidth;
+          canvas.height = imageElement.naturalHeight * tileCount;
         } else {
-          width = imageElement.naturalWidth * tileCount;
-          height = imageElement.naturalHeight;
+          canvas.width = imageElement.naturalWidth * tileCount;
+          canvas.height = imageElement.naturalHeight;
         }
 
-        canvas.width = width;
-        canvas.height = height;
+        console.log(canvas.width);
+        console.log(canvas.height)
 
         if (context) {
           if (isVertical) {
@@ -221,10 +192,6 @@ const FleetChoices = ({
     }
   }
 
-  useEffect(() => {
-    console.log("updated tickedship", tickedShip);
-  },[tickedShip, setTickedShip]);
-  
 
   return (
     <>
@@ -305,7 +272,7 @@ const FleetChoices = ({
               draggable
             />
           </div>
-          <button ref={rotateBtn} className="rotate-btn" onClick={handleRotate}>
+          <button ref={rotateBtn} className="rotate-btn" onClick={(e) => handleRotate(e.target)}>
             Rotate Ship
           </button>
         </div>

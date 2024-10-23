@@ -1,5 +1,4 @@
 import React from "react";
-import { UserContextType } from "../context/UserContext";
 
 
   function setTile(tile:EventTarget, playerSide: string, tickedShip:string) {
@@ -23,11 +22,22 @@ import { UserContextType } from "../context/UserContext";
       // console.log("handle tile drag over tickedShip, tile, tileCount, number = ", tickedShip, tile, tileCount, isVertical);
       // console.log(tileCount);
     const targetTile = tile as HTMLDivElement;
+    const getTileId = targetTile.id;
+    const tileNum = +getTileId.replace("player-side", "") || getTileId.replace("opponent-side", "");
+    // console.log('tickedShip = ', tickedShip)
+    // console.log('tileCount = ', tileCount)
+    // console.log('is vertical = ', isVertical)
+
     if (targetTile.hasAttribute("player-side")) {
+      if (tileCount === 2) {
+        if (isVertical) {
+          if (+tileNum - 10 < 1 || +tileNum > 90) {
+            targetTile.style.background = "red";
+          }
+        }
+      }
       targetTile.style.background = "hsla(120, 85%, 85%, 1)";
-    } else {
-      targetTile.style.background = "red";
-    }
+    } 
   }
 
   function handleTileDragLeave(tile: EventTarget) {
@@ -35,30 +45,11 @@ import { UserContextType } from "../context/UserContext";
       targetTile.style.background = "none"
   }
 
-const PlaceFleet = ({
-  isVertical,
-  setIsVertical,
-  playerTile,
-  setPlayerTile,
-  tickedShip,
-  setTickedShip,
-  tileCount, 
-  setTileCount
-}: Pick<
-  UserContextType,
-  | "isVertical"
-  | "setIsVertical"
-  | "playerTile"
-  | "setPlayerTile"
-  | "tickedShip"
-  | "setTickedShip"
-  | "tileCount"
-  | "setTileCount"
->): JSX.Element => {
- 
+  function PlaceFleet(): JSX.Element {
+    return (
+      <div> This is placefleet container</div>
+    )
+  }
 
-
-  
-};
 
 export {PlaceFleet, setTile, handleTileDragOver, handleTileDragLeave};

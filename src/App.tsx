@@ -1,30 +1,20 @@
 import "./styles/App.scss";
 import { useState } from "react";
-import UserContext from "./context/UserContext";
+import UserContext, { PlayerProps } from "./context/UserContext";
 import MainPage from "./components/MainPage";
 
 function App() {
-  const [numberOfPlayers, setNumberOfPlayers] = useState<string>("");
+  const [numberOfPlayers, setNumberOfPlayers] = useState<number>(1);
   const [blockSize, setBlockSize] = useState<{ width: number; height: number }>(
     { width: 0, height: 0 }
   );
 
-  interface PlayerProps {
-    num: number;
-    taken: boolean;
-  }
-
-  const [playerTile, setPlayerTile] = useState<PlayerProps[]>([
-    {} as PlayerProps,
-  ]);
+  const [playerTile, setPlayerTile] = useState<PlayerProps[]>([]);
   // const [degree, setDegree] = useState<number>(0);
   const [isVertical, setIsVertical] = useState<boolean>(false);
-  const [tickedShip, setTickedShip] = useState<string>("carrier");
+  const [tickedShip, setTickedShip] = useState<string>("destroyer");
   const [tileCount, setTileCount] = useState<number>(0);
-
-  return (
-    <UserContext.Provider
-      value={{
+  const value = {
         numberOfPlayers,
         setNumberOfPlayers,
         blockSize,
@@ -37,8 +27,10 @@ function App() {
         setTickedShip,
         tileCount,
         setTileCount,
-      }}
-    >
+      }
+
+  return (
+    <UserContext.Provider value={value}>
       <MainPage />
     </UserContext.Provider>
   );

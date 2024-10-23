@@ -4,7 +4,8 @@ import GameName from "./GameName";
 import FleetChoices from "./FleetChoices";
 import UserContext from "../context/UserContext";
 import generateBoardGrid from "./generateBoardGrid";
-import {PlaceFleet} from "./PlaceFleet";
+import { PlaceFleet } from "./PlaceFleet";
+
 
 const LoadBoard = () => {
   const context = useContext(UserContext);
@@ -12,8 +13,6 @@ const LoadBoard = () => {
     return <div id="load-board">Loading the board...</div>;
   }
   const {
-    blockSize,
-    setBlockSize,
     isVertical,
     setIsVertical,
     tickedShip,
@@ -27,7 +26,10 @@ const LoadBoard = () => {
 
   useEffect(() => {
     if (pageReady) {
-      // create board
+      // create board grid
+      generateBoardGrid(tickedShip, tileCount, isVertical);
+
+      // create fleet and information section
       const mainContainer = document.querySelector(
         ".main-page-container"
       ) as HTMLElement;
@@ -44,7 +46,6 @@ const LoadBoard = () => {
         ".letters"
       ) as NodeListOf<HTMLElement>;
 
-      // setTimeout(() => {
       if (imgContainer && choicesContainer && titleContainer) {
         imgContainer.style.animation = "fade-out 1000ms linear forwards";
         choicesContainer.style.animation = "fade-out 1000ms linear forwards";
@@ -64,45 +65,6 @@ const LoadBoard = () => {
         mainContainer.style.flexDirection = "row";
         mainContainer.style.alignItems = "stretch";
       }
-
-      // creating container that will contain all other information (e.g. title, fleets, buttons) and append to main page
-
-      const infoContainerDiv: HTMLDivElement = document.createElement("div");
-      infoContainerDiv.className = "info-container";
-      mainContainer.append(infoContainerDiv);
-      infoContainerDiv.append(titleContainer);
-
-      const root = ReactDOM.createRoot(infoContainerDiv);
-      root.render(
-        <>
-          <GameName value="game" />
-          <FleetChoices
-            blockSize={blockSize}
-            setBlockSize={setBlockSize}
-            isVertical={isVertical}
-            setIsVertical={setIsVertical}
-            tickedShip={tickedShip}
-            setTickedShip={setTickedShip}
-            tileCount={tileCount}
-            setTileCount={setTileCount}
-          />
-          {generateBoardGrid(tickedShip, tileCount, isVertical)}
-          <PlaceFleet
-            isVertical={isVertical}
-            setIsVertical={setIsVertical}
-            playerTile={playerTile}
-            setPlayerTile={setPlayerTile}
-            tickedShip={tickedShip}
-            setTickedShip={setTickedShip}
-            tileCount={tileCount}
-            setTileCount={setTileCount}
-          />
-        </>
-      );
-
-      return () => {root.unmount();
-      infoContainerDiv.remove();
-      };
     }
   }, [pageReady]);
 
@@ -110,9 +72,19 @@ const LoadBoard = () => {
     setPageReady(true);
   }, []);
 
+       return (
+        <>
+          <GameName value="game" />
+          {context && (
+            <>
+              <FleetChoices />
+              {/* {generateBoardGrid(tickedShip, tileCount, isVertical)} */}
+              <PlaceFleet />
+            </>
+          )}
+        </>
+      );
 
-
-  return null;
 };
 
 export default LoadBoard;

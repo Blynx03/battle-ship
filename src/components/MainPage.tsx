@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext";
 import LoadBoard from "./LoadBoard";
 import MainPageContent from "./MainPageContent";
@@ -17,11 +17,11 @@ const MainPage = () => {
 
     // animate clicked button
     if (players === "single") {
-      setPlayerCount("single");
+      setPlayerCount(1);
       const singleBtn = document.querySelector(".single-player") as HTMLElement;
       singleBtn.style.animation = "button-click 1000ms linear forwards";
     } else if (players === "multi") {
-      setPlayerCount("multi");
+      setPlayerCount(2);
       const multiBtn = document.querySelector(".multi-player") as HTMLElement;
       multiBtn.style.animation = "button-click 1000ms linear forwards";
     }
@@ -39,7 +39,12 @@ const MainPage = () => {
 
   return (
     <div className="main-page-container">
-      {!showLoadBoard ? <MainPageContent handleClick={handleClick}/> : <LoadBoard/>}
+      {!showLoadBoard 
+      ? <MainPageContent handleClick={handleClick}/> 
+      : 
+      <div className="info-container" >
+      <LoadBoard /></div>}
+      
     </div>
   );
 };

@@ -1,14 +1,25 @@
 import { createContext, Dispatch, SetStateAction } from "react";
 
+
+interface BlockSize {
+  width: number;
+  height: number;
+}
+
+export interface PlayerProps {
+  num: number;
+  taken: boolean;
+}
+
 export interface UserContextType {
-  numberOfPlayers: string;
-  setNumberOfPlayers: Dispatch<SetStateAction<string>>;
-  blockSize: { width: number; height: number };
-  setBlockSize: Dispatch<SetStateAction<{ width: number; height: number }>>;
+  numberOfPlayers: number;
+  setNumberOfPlayers: Dispatch<SetStateAction<number>>;
+  blockSize: BlockSize;
+  setBlockSize: Dispatch<SetStateAction<BlockSize>>;
   isVertical: boolean;
   setIsVertical: Dispatch<SetStateAction<boolean>>;
-  playerTile: { num: number; taken: boolean }[];
-  setPlayerTile: Dispatch<SetStateAction<{ num: number; taken: boolean }[]>>;
+  playerTile: PlayerProps[];
+  setPlayerTile: Dispatch<SetStateAction<PlayerProps[]>>;
   tickedShip: string;
   setTickedShip: Dispatch<SetStateAction<string>>;
   tileCount: number;
@@ -16,6 +27,6 @@ export interface UserContextType {
 }
 
 // const UserContext = createContext<UserContextType | undefined>(undefined);
-const UserContext = createContext<UserContextType>({} as UserContextType);
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export default UserContext;
