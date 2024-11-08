@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext";
 import LoadBoard from "./LoadBoard";
 import MainPageContent from "./MainPageContent";
+import GenerateBoardGrid from "./GenerateBoardGrid";
 
 const MainPage = () => {
   const context = useContext(UserContext);
@@ -37,16 +38,22 @@ const MainPage = () => {
     }, 1000);
   };
 
-  return (
-    <div className="main-page-container">
-      {!showLoadBoard 
-      ? <MainPageContent handleClick={handleClick}/> 
-      : 
-      <div className="info-container" >
-      <LoadBoard /></div>}
-      
-    </div>
-  );
+    return (
+        <div className="main-page-container">
+            {
+            !showLoadBoard 
+            ?   <MainPageContent handleClick={handleClick}/> 
+            :   <>
+                    <div className="info-container" >
+                        < LoadBoard />
+                    </div>
+                    <div className="boardgame-container">
+                        <GenerateBoardGrid />
+                    </div>
+                </>
+            }
+        </div>
+    );
 };
 
 export default MainPage;

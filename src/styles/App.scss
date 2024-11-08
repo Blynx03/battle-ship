@@ -76,6 +76,16 @@ $tile-height: calc(100% / $row);
   }
 }
 
+@keyframes blink {
+  0%, 50%, 100% {
+    opacity: 1;
+  }
+  25%, 75% {
+    opacity: 0;
+    color: yellow;
+  }
+}
+
 @keyframes fade-out {
   100% {
     opacity: 0;
@@ -197,7 +207,7 @@ $tile-height: calc(100% / $row);
 
             &:hover {
               transform: scaleX(1.3) scaleY(1.5);
-              color: red;
+              // color: red;
             }
           }
         }
@@ -220,12 +230,22 @@ $tile-height: calc(100% / $row);
           display: flex;
           justify-content: center;
           align-items: center;
+          position: relative;
 
           img {
             width: 100%;
             height: auto;
+            // position: absolute
           }
+
         }
+
+        .drag-error-message {
+        color: lime;
+        text-shadow: 0 0 15px black;
+        margin-bottom: 14px;
+        animation: blink 3s ease infinite;
+      }
 
         button {
           height: 10%;
@@ -370,7 +390,7 @@ $tile-height: calc(100% / $row);
   // Loading Game
   .boardgame-container {
     padding: 80px 60px;
-    width: 700px;
+    width: 660px;
     height: auto;
 
     .top-container,
@@ -396,6 +416,11 @@ $tile-height: calc(100% / $row);
       width: $tile-width;
       height: $tile-height;
       border: 1px dotted black;
+      position: relative;
+    }
+
+    .tile img {
+      position: absolute;
     }
   }
 
