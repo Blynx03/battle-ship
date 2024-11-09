@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useContext, RefObject } from "react";
 import UserContext, { UserContextType } from "../context/UserContext";
-import { clickedShip } from "./mouseUtilities";
+import { clickedShip, handleMouseDown } from "./mouseUtilities";
 
 
 const FleetChoices = (): JSX.Element => {
     const context = useContext(UserContext) as UserContextType;
-    const {blockSize, setBlockSize, isVertical, setIsVertical, tickedShip, setTickedShip, tileCount, setTileCount, imagePath, imageClass, fleetState, imageRef} = context;
+    const {playerSide, blockSize, setBlockSize, isVertical, setIsVertical, tickedShip, imagePath, imageClass, fleetState, imageRef} = context;
 
     const rotateBtn = useRef<HTMLButtonElement>(null);
 
@@ -47,18 +47,9 @@ const FleetChoices = (): JSX.Element => {
         let rect = element?.getBoundingClientRect();
         setBlockSize({ width: rect.width, height: rect.height });
         }
-    }, [tickedShip, setTickedShip]);
+    }, []);
 
-    function handleMouseDown() {
-        let errorMessage = document.querySelector('.drag-error-message') as HTMLElement;
-        if (imageRef.current) {
-            if (imageRef.current.draggable === false) {
-                if (errorMessage) {
-                    errorMessage.textContent = "You already placed this. Choose a different available ship."
-                }
-            }
-        }
-    }
+ 
 
     function handleDragEnd() {
         // const el = event.target as HTMLElement;
@@ -76,7 +67,7 @@ const FleetChoices = (): JSX.Element => {
                 <div ref={ship.ref}
                     className={`${ship.ship} ship-name`}
                     style={ship.isGreen ? {color: "#F25050"} : {}}
-                    onClick={!ship.isGreen ? () => clickedShip(ship.ship, ship.ref, context) : undefined}>
+                    onClick={!ship.isGreen && playerSide === "player-side" ? () => clickedShip(ship.ship, ship.ref, context) : undefined}>
                     {ship.ship.charAt(0).toUpperCase() + ship.ship.slice(1)}
                 </div>
                 <div className={`${ship.ship}-tile info-num-tiles`}>
@@ -107,7 +98,8 @@ const FleetChoices = (): JSX.Element => {
                     transform: isVertical ? "rotate(270deg)" : "rotate(0deg)"
                 }}
                 src={imagePath ? imagePath : `../images/destroyer.png`}
-                onMouseDown={handleMouseDown}
+                onMouseDown={() => handleMouseDown(imageRef)}
+                onClick={() => handleRotate()}
                 // onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 draggable="true"

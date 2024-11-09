@@ -421,6 +421,7 @@ $tile-height: calc(100% / $row);
 
     .tile img {
       position: absolute;
+      background-color: none !important;
     }
   }
 
@@ -442,7 +443,7 @@ $tile-height: calc(100% / $row);
       display: flex;
       gap: 5px;
 
-      .ship-images {
+      .ship-image {
         opacity: 1;
         height: 50%;
 

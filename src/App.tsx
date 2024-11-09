@@ -5,6 +5,7 @@ import MainPage from "./components/MainPage";
 
 function App() {
   const [numberOfPlayers, setNumberOfPlayers] = useState<number>(1);
+  const [playerSide, setPlayerSide] = useState<"player-side" | "opponent-side">("player-side");
   const [blockSize, setBlockSize] = useState<{ width: number; height: number }>(
     { width: 0, height: 0 }
   );
@@ -21,7 +22,7 @@ function App() {
   const [tickedShip, setTickedShip] = useState<string>("destroyer");
   const [tileCount, setTileCount] = useState<number>(2);
   const [imagePath, setImagePath] = useState<string>("../images/destroyer.png");
-  const [imageClass, setImageClass] = useState<string>("destroyer-img ship-images");
+  const [imageClass, setImageClass] = useState<string>("destroyer-img ship-image");
   const [fleetState, setFleetState] = useState<FleetProps[]>([
                 {ship: "destroyer",ref: destroyerRef, tile: 2, isGreen: false},
                 {ship: "submarine",ref: submarineRef, tile: 3, isGreen: false},
@@ -31,12 +32,15 @@ function App() {
             ]);
   const [counter, setCounter] = useState<number>(0);
   const [chosenTiles, setChosenTiles] = useState<number[]>([]);
-  const [color, setColor] = useState<string>('');
+  const [color, setColor] = useState<"red" | "palegreen" | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  const [ gameOn, setGameOn ] = useState<boolean>(false);
 
   const value = {
         numberOfPlayers,
         setNumberOfPlayers,
+        playerSide,
+        setPlayerSide,
         blockSize,
         setBlockSize,
         isVertical,
@@ -61,7 +65,9 @@ function App() {
         setChosenTiles,
         color,
         setColor,
-        imageRef
+        imageRef,
+        gameOn,
+        setGameOn
       }
 
   return (

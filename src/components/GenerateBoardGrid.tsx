@@ -5,13 +5,12 @@ import { handleDragLeave, handleDragOver, handleDrop } from "./dragUtilities";
 
 
 const GenerateBoardGrid = () => {
-    const [enemySide, setEnemySide] = useState<boolean>(false);
     const context = useContext(UserContext) as UserContextType;
-    const { tickedShip, counter, color, chosenTiles } = context;
+    const { playerSide, setPlayerSide, tickedShip, playerTiles, opponentTiles, counter, setCounter, color, chosenTiles, setGameOn } = context;
     // let chosenTiles:number[] = [];
     let tileNum: number = 0;
 
-    function setTile(tile:EventTarget, playerSide: string) {
+    function setTile(tile:EventTarget) {
         const el = document.querySelector(`${tickedShip}`);
         if (el) {
             el.remove();
@@ -28,29 +27,35 @@ const GenerateBoardGrid = () => {
     }
 
     // Setting up the board/grid
-    const createTiles = (playerSide: string) => {
+    const createTiles = (participant: string) => {
         const tiles = [];
         for (let i = 1; i <= 100; i++) {
             tiles.push(
                 <div
-                    key={`${playerSide}${i}`} 
-                    id={`${playerSide}${i}`} 
-                    className={`tile ${playerSide}${i}`}
-                    {...{[playerSide]: ""}}
-                    onDragOver={(e)=> handleDragOver(e, playerSide, tileNum, context)}
-                    onDragLeave={(e)=> handleDragLeave(e, playerSide, color, chosenTiles)}
-                    onDrop={(e)=>handleDrop(e, playerSide, context)}
+                    key={`${participant}${i}`} 
+                    id={`${participant}${i}`} 
+                    className={`tile ${participant}${i}`}
+                    {...{[participant]: ""}}
+                    onDragOver={(e)=> handleDragOver(e, tileNum, context)}
+                    onDragLeave={()=> handleDragLeave(participant, chosenTiles)}
+                    onDrop={(e)=>handleDrop(e.target as HTMLElement, context)}
                 >
-
-            </div>
+                </div>
             )
         }
         return tiles;
     }
 
     useEffect(() => {
-        if (counter === 5 && !enemySide) {
-            setEnemySide(true);
+        if (counter === 5) {
+            if (playerSide === "player-side") {
+                setPlayerSide("opponent-side");
+            } else {
+                console.log("GAME ON!!!")
+                console.log('player tiles = ', playerTiles)
+                console.log('opponent tiles = ', opponentTiles)
+                setGameOn(true);
+            }
         }
     },[counter])
     
@@ -59,7 +64,7 @@ const GenerateBoardGrid = () => {
         <>
             <div className="top-container">
                 {createTiles("opponent-side")}
-                {enemySide && <GenerateOpponentShips />}
+                {playerSide === "opponent-side" && <GenerateOpponentShips />}
             </div>
             <div className="bottom-container">
                 {createTiles("player-side")}

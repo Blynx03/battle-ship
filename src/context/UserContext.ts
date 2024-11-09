@@ -29,6 +29,8 @@ export interface FleetProps {
 export interface UserContextType {
   numberOfPlayers: number;
   setNumberOfPlayers: Dispatch<SetStateAction<number>>;
+  playerSide: "player-side" | "opponent-side";
+  setPlayerSide: Dispatch<SetStateAction<"player-side" | "opponent-side">>;
   blockSize: BlockSize;
   setBlockSize: Dispatch<SetStateAction<BlockSize>>;
   isVertical: boolean;
@@ -51,9 +53,11 @@ export interface UserContextType {
   setCounter: Dispatch<SetStateAction<number>>;
   chosenTiles: number[];
   setChosenTiles: Dispatch<SetStateAction<number[]>>;
-  color: string;
-  setColor: Dispatch<SetStateAction<string>>;
+  color: "red" | "palegreen" | null;
+  setColor: Dispatch<SetStateAction<"red" | "palegreen" | null>>;
   imageRef: React.RefObject<HTMLImageElement>;
+  gameOn: boolean;
+  setGameOn: Dispatch<SetStateAction<boolean>>;
 }
 
 // const UserContext = createContext<UserContextType | undefined>(undefined);
