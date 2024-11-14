@@ -28,27 +28,6 @@ export const clickedShip = (ship: string, shipRef: React.RefObject<HTMLDivElemen
     if (shipRef.current) {
         // shipElement.style.color = 'lime';
     }
-
-    // fleetState.forEach(fleet => {
-    //     if (fleet.ship === ship) {
-    //         setTileCount(fleet.tile)
-    //     }
-    // })
-
-    // switch (ship) {
-    // case "destroyer": setTileCount(2)
-    //     break;
-    // case "submarine": setTileCount(3)
-    //     break;
-    // case "cruiser": setTileCount(3)
-    //     break;
-    // case "battleship": setTileCount(4)
-    //     break;
-    // case "carrier": setTileCount(5);
-    //     break;
-    // default:
-    //     break;
-    // }
 }
 
 export function handleMouseDown(imageRef: React.RefObject<HTMLImageElement>) {
