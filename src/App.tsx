@@ -1,17 +1,20 @@
-import "./styles/App.scss";
-import { useState, useRef } from "react";
-import UserContext, { FleetProps, PlayerProps } from "./context/UserContext";
+import "./styles/app.scss";
+import React, { useState, useRef } from "react";
+import UserContext, {
+    FleetProps,
+    PlayerProps,
+    BlockSizeProps,
+    SideType,
+} from "./context/UserContext";
 import MainPage from "./components/MainPage";
 
 function App() {
     const [numberOfPlayers, setNumberOfPlayers] = useState<number>(1);
-    const [playerSide, setPlayerSide] = useState<
-        "player-side" | "opponent-side"
-    >("player-side");
-    const [blockSize, setBlockSize] = useState<{
-        width: number;
-        height: number;
-    }>({ width: 0, height: 0 });
+    const [playerSide, setPlayerSide] = useState<SideType>("player-side");
+    const [blockSize, setBlockSize] = useState<BlockSizeProps>({
+        width: 0,
+        height: 0,
+    });
 
     const destroyerRef = useRef<HTMLDivElement>(null);
     const submarineRef = useRef<HTMLDivElement>(null);
@@ -40,8 +43,23 @@ function App() {
     const [counter, setCounter] = useState<number>(0);
     const [chosenTiles, setChosenTiles] = useState<number[]>([]);
     const [color, setColor] = useState<"red" | "palegreen">("red");
+    const [showRotateBtn, setShowRotateBtn] = useState<boolean>(true);
     const imageRef = useRef<HTMLImageElement>(null);
     const [gameOn, setGameOn] = useState<boolean>(false);
+    const [animatePage, setAnimatePage] = useState<boolean>(false);
+    const mainPageContainerRef = useRef<HTMLDivElement>(null);
+    const mainPageImageContainerRef = useRef<HTMLDivElement>(null);
+    const mainPageChoicesContainerRef = useRef<HTMLDivElement>(null);
+    const singlePlayerButtonRef = useRef<HTMLButtonElement>(null);
+    const multiPlayerButtonRef = useRef<HTMLButtonElement>(null);
+    const mainPageTitleContainerRef = useRef<HTMLDivElement>(null);
+    const gamePageTitleContainerRef = useRef<HTMLDivElement>(null);
+    const infoContainerRef = useRef<HTMLDivElement>(null);
+    const rotateBtnRef = useRef<HTMLButtonElement>(null);
+    const boardgameContainerRef = useRef<HTMLDivElement>(null);
+    const topContainerRef = useRef<HTMLDivElement>(null);
+    const targetImageRef = useRef<HTMLImageElement>(null);
+    const bottomContainerRef = useRef<HTMLDivElement>(null);
 
     const value = {
         numberOfPlayers,
@@ -72,9 +90,26 @@ function App() {
         setChosenTiles,
         color,
         setColor,
+        showRotateBtn,
+        setShowRotateBtn,
         imageRef,
         gameOn,
         setGameOn,
+        animatePage,
+        setAnimatePage,
+        mainPageContainerRef,
+        mainPageImageContainerRef,
+        mainPageChoicesContainerRef,
+        singlePlayerButtonRef,
+        multiPlayerButtonRef,
+        mainPageTitleContainerRef,
+        gamePageTitleContainerRef,
+        infoContainerRef,
+        rotateBtnRef,
+        boardgameContainerRef,
+        topContainerRef,
+        targetImageRef,
+        bottomContainerRef,
     };
 
     return (

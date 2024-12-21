@@ -1,6 +1,6 @@
-import React, { createContext, Dispatch, SetStateAction } from "react";
+import { createContext, Dispatch, SetStateAction, RefObject } from "react";
 
-interface BlockSize {
+export interface BlockSizeProps {
     width: number;
     height: number;
 }
@@ -21,6 +21,7 @@ export interface FleetProps {
     isGreen: boolean;
 }
 
+export type SideType = "player-side" | "opponent-side";
 // interface FleetRefProps {
 //   destroyerRef: React.RefObject<HTMLDivElement>;
 //   submarineRef: React.RefObject<HTMLDivElement>;
@@ -32,10 +33,10 @@ export interface FleetProps {
 export interface UserContextType {
     numberOfPlayers: number;
     setNumberOfPlayers: Dispatch<SetStateAction<number>>;
-    playerSide: "player-side" | "opponent-side";
-    setPlayerSide: Dispatch<SetStateAction<"player-side" | "opponent-side">>;
-    blockSize: BlockSize;
-    setBlockSize: Dispatch<SetStateAction<BlockSize>>;
+    playerSide: SideType;
+    setPlayerSide: Dispatch<SetStateAction<SideType>>;
+    blockSize: BlockSizeProps;
+    setBlockSize: Dispatch<SetStateAction<BlockSizeProps>>;
     isVertical: boolean;
     setIsVertical: Dispatch<SetStateAction<boolean>>;
     playerTiles: PlayerProps[];
@@ -58,9 +59,26 @@ export interface UserContextType {
     setChosenTiles: Dispatch<SetStateAction<number[]>>;
     color: "red" | "palegreen";
     setColor: Dispatch<SetStateAction<"red" | "palegreen">>;
-    imageRef: React.RefObject<HTMLImageElement>;
+    imageRef: RefObject<HTMLImageElement>;
+    showRotateBtn: boolean;
+    setShowRotateBtn: Dispatch<SetStateAction<boolean>>;
     gameOn: boolean;
     setGameOn: Dispatch<SetStateAction<boolean>>;
+    animatePage: boolean;
+    setAnimatePage: Dispatch<SetStateAction<boolean>>;
+    mainPageContainerRef: RefObject<HTMLDivElement>;
+    mainPageImageContainerRef: RefObject<HTMLDivElement>;
+    mainPageChoicesContainerRef: RefObject<HTMLDivElement>;
+    singlePlayerButtonRef: RefObject<HTMLButtonElement>;
+    multiPlayerButtonRef: RefObject<HTMLButtonElement>;
+    mainPageTitleContainerRef: RefObject<HTMLDivElement>;
+    gamePageTitleContainerRef: RefObject<HTMLDivElement>;
+    infoContainerRef: RefObject<HTMLDivElement>;
+    rotateBtnRef: RefObject<HTMLButtonElement>;
+    boardgameContainerRef: RefObject<HTMLDivElement>;
+    topContainerRef: RefObject<HTMLDivElement>;
+    targetImageRef: RefObject<HTMLImageElement>;
+    bottomContainerRef: RefObject<HTMLDivElement>;
 }
 
 // const UserContext = createContext<UserContextType | undefined>(undefined);

@@ -1,50 +1,40 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import GameName from "./GameName";
 import FleetChoices from "./FleetChoices";
+import UserContext, { UserContextType } from "../context/UserContext";
 
 
 const LoadBoard = (): JSX.Element => {
-    // const context = useContext(UserContext);
-    //   if (!context) {
-    //   return <div id="load-board">Loading the board...</div>;
-    // }
     const [pageReady, setPageReady] = useState(false);
+    const { mainPageContainerRef, mainPageImageContainerRef, mainPageChoicesContainerRef, mainPageTitleContainerRef, gameOn } = useContext(UserContext) as UserContextType;
+
 
     useEffect(() => {
         // create fleet and information section
-        const mainContainer = document.querySelector(
-            ".main-page-container"
-        ) as HTMLElement;
-        const imgContainer = document.querySelector(
-            ".main-page-image-container"
-        ) as HTMLElement;
-        const choicesContainer = document.querySelector(
-            ".main-page-choices-container"
-        ) as HTMLElement;
-        const titleContainer = document.querySelector(
-            ".main-page-title-container"
-        ) as HTMLElement;
+        
         const titleLetters = document.querySelectorAll(
             ".letters"
         ) as NodeListOf<HTMLElement>;
 
-        if (imgContainer && choicesContainer && titleContainer) {
-            imgContainer.style.animation = "fade-out 1000ms linear forwards";
-            choicesContainer.style.animation = "fade-out 1000ms linear forwards";
+        if (mainPageImageContainerRef.current && mainPageChoicesContainerRef.current && mainPageTitleContainerRef.current) {
+            mainPageImageContainerRef.current.style.animation = "fade-out 1000ms linear forwards";
+            mainPageChoicesContainerRef.current.style.animation = "fade-out 1000ms linear forwards";
             setTimeout(() => {
-                imgContainer.remove();
-                choicesContainer.remove();
+                if (mainPageImageContainerRef.current && mainPageChoicesContainerRef.current) {
+                    mainPageImageContainerRef.current.remove();
+                    mainPageChoicesContainerRef.current.remove();    
+                }
             }, 1000);
 
-            titleContainer.style.animation =
+            mainPageTitleContainerRef.current.style.animation =
             "move-title-container 1000ms linear forwards";
             titleLetters.forEach((letter) =>
                 (letter.style.animation = "move-letters 1000ms linear forwards")
             );
         }
-        if (mainContainer) {
-            mainContainer.style.flexDirection = "row";
-            mainContainer.style.alignItems = "stretch";
+        if (!gameOn && mainPageContainerRef.current) {
+            mainPageContainerRef.current.style.flexDirection = "row";
+            mainPageContainerRef.current.style.alignItems = "stretch";
         }
     }, [pageReady]);
 
@@ -55,7 +45,7 @@ const LoadBoard = (): JSX.Element => {
     return (
         <>
             <GameName value="game" />
-            <FleetChoices />
+            {!gameOn ? <FleetChoices /> : null}
         </>
     );
 

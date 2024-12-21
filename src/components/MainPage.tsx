@@ -1,32 +1,31 @@
-import { useContext, useEffect, useState } from "react";
-import UserContext from "../context/UserContext";
-import LoadBoard from "./LoadBoard";
+import { useContext, useMemo, useState } from "react";
+import UserContext, { UserContextType } from "../context/UserContext";
 import MainPageContent from "./MainPageContent";
-import GenerateBoardGrid from "./GenerateBoardGrid";
+import BoardGame from "./BoardGame";
 
 const MainPage = () => {
-  const context = useContext(UserContext);
   const [showLoadBoard, setShowLoadBoard] = useState(false);
-  const setPlayerCount = context?.setNumberOfPlayers;
+  const { setNumberOfPlayers, gameOn, setGameOn, mainPageContainerRef, singlePlayerButtonRef, multiPlayerButtonRef } = useContext(UserContext) as UserContextType;
+
 
   // load board game
   const handleClick = (players: string) => {
-    if (!setPlayerCount) {
+    if (!setNumberOfPlayers) {
       console.error;
       return;
     }
 
     // animate clicked button
-    if (players === "single") {
-      setPlayerCount(1);
-      const singleBtn = document.querySelector(".single-player") as HTMLElement;
-      singleBtn.style.animation = "button-click 1000ms linear forwards";
-    } else if (players === "multi") {
-      setPlayerCount(2);
-      const multiBtn = document.querySelector(".multi-player") as HTMLElement;
-      multiBtn.style.animation = "button-click 1000ms linear forwards";
+    if (singlePlayerButtonRef.current && multiPlayerButtonRef.current) {
+        if (players === "single") {
+            setNumberOfPlayers(1);
+            singlePlayerButtonRef.current.style.animation = "button-click 1000ms linear forwards";
+        } else if (players === "multi") {
+            setNumberOfPlayers(2);
+            multiPlayerButtonRef.current.style.animation = "button-click 1000ms linear forwards";
+        }
     }
-
+    
     // animate battleship image
     const shipImage = document.querySelector(
       ".battleship-image"
@@ -38,20 +37,20 @@ const MainPage = () => {
     }, 1000);
   };
 
+  function loadPage(): React.ReactNode {
+      if (!showLoadBoard) {
+        return <MainPageContent handleClick={handleClick} />
+      } else {
+        return <BoardGame />
+      }
+  }
+
+
+  const loadMain: React.ReactNode = useMemo(() => loadPage(), [gameOn, setGameOn, showLoadBoard, setShowLoadBoard]);
+
     return (
-        <div className="main-page-container">
-            {
-            !showLoadBoard 
-            ?   <MainPageContent handleClick={handleClick}/> 
-            :   <>
-                    <div className="info-container" >
-                        < LoadBoard />
-                    </div>
-                    <div className="boardgame-container">
-                        <GenerateBoardGrid />
-                    </div>
-                </>
-            }
+        <div ref={mainPageContainerRef} className="main-page-container">
+          {loadMain}
         </div>
     );
 };

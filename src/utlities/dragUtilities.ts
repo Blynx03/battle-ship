@@ -1,6 +1,6 @@
-import React from "react";
+import assignBackgroundColor from "../components/assignBackgroundColor";
 import { UserContextType } from "../context/UserContext";
-import assignBackgroundColor from "./assignBackgroundColor";
+import { getTileElement, getTileNumber } from "./operationUtilities";
 
 // need to create this as a wrapper to execute preventDefault, and pass
 // the event.target to the placeShip. The logic for the opponent
@@ -12,20 +12,14 @@ export function handleDragOver(
     context: UserContextType
 ) {
     event.preventDefault();
-    let targetEl = event.target as HTMLElement;
-    handlePlaceShip(targetEl, tileNum, context);
-}
+    let targetElement = event.target as HTMLElement;
 
-// handles to show the orientation of the ship to be laid out
-// and how many tiles are needed to accommodate the ship. It will also
-// show the background color red and green, where red is "not okay" and
-// green is "ok" to be dropped on the tile. Also this should change the
-// ship's name's color to red to mark as set.
-export function handlePlaceShip(
-    targetElement: HTMLElement,
-    tileNum: number,
-    context: UserContextType
-) {
+    // handles to show the orientation of the ship to be laid out
+    // and how many tiles are needed to accommodate the ship. It will also
+    // show the background color red and green, where red is "not okay" and
+    // green is "ok" to be dropped on the tile. Also this should change the
+    // ship's name's color to red to mark as set.
+
     const {
         playerSide,
         tickedShip,
@@ -40,21 +34,19 @@ export function handlePlaceShip(
     // extract the number in the tile
     tileNum =
         playerSide === "player-side"
-            ? parseInt(
-                  targetElement.getAttribute("id")?.replace(playerSide, "") ||
-                      "0",
-                  10
-              )
+            ? getTileNumber(targetElement, playerSide)
             : tileNum;
     let tempChosenTiles: number[] = [];
 
     //get associated tiles based on orientation
     if (playerSide) {
-        const { isTaken, bgColor, tiles } = assignBackgroundColor(
+        const { bgColor, tiles } = assignBackgroundColor(
             tileNum,
             playerSide,
             isVertical,
-            tileCount
+            tileCount,
+            playerTiles,
+            opponentTiles
         );
 
         tempChosenTiles = tiles.filter((value) => value >= 1 && value <= 100);
@@ -68,32 +60,15 @@ export function handlePlaceShip(
                 tileElement.style.background = bgColor as string;
             }
         }
-
-
-        // if (targetElement && bgColor === "palegreen" && !isTaken) {
-        //     targetElement.style.background = bgColor as string;
-        // } else {
-        //     for (let i = 0; i < tempChosenTiles.length; i++) {
-        //         let tileElement = document.querySelector(
-        //             `#${playerSide}${tempChosenTiles[i]}`
-        //         ) as HTMLElement;
-        //         if (tileElement) {
-        //             tileElement.style.background = bgColor as string;
-        //         }
-        //     }
-        // }
         setColor(bgColor);
     }
     setChosenTiles(tempChosenTiles);
     // setColor(bgColor);
 }
-
 // handles to reset the background color when mouse leaves the tile
-export function handleDragLeave(playerSide: string, chosenTiles: number[]) {
+export function handleDragLeave(participant: string, chosenTiles: number[]) {
     for (let i = 0; i < chosenTiles.length; i++) {
-        let el = document.querySelector(
-            `#${playerSide}${chosenTiles[i]}`
-        ) as HTMLElement;
+        let el = getTileElement(participant, chosenTiles[i]) as HTMLElement;
         el.style.background = "none";
         if (el && el.hasChildNodes()) {
             el.style.background = "none";
@@ -132,7 +107,6 @@ export function handleDrop(target: HTMLElement, context: UserContextType) {
                 tileEl.style.background = "none";
             }
         });
-        // setCounter(prev => prev);
         // if ship is OK to be dropped then image of ship will show up on the tiles with correct orientation
     } else {
         // stop drag on image
@@ -193,8 +167,11 @@ export function handleDrop(target: HTMLElement, context: UserContextType) {
               ]);
 
         if (isVertical) {
-            image.width = blockSize.height * tileCount - 10;
-            image.height = blockSize.width - 20;
+            image.width = blockSize.height * tileCount - 5;
+            image.height = blockSize.width - 10;
+            // image.width = ((blockSize.height * tileCount) * 0.85);
+            // image.height = blockSize.width * 0.85;
+            // let imageMargin = blockSize.height - image.width;
             // get the element with the max value in the chosenTiles to position the image from the bottom tile
             let tileEl = document.querySelector(
                 `.${playerSide}${max}`
@@ -202,13 +179,15 @@ export function handleDrop(target: HTMLElement, context: UserContextType) {
             tileEl?.appendChild(image);
             image.style.transformOrigin = "top left";
             image.style.transform = "rotate(270deg)";
-            image.style.left = "10px";
-            image.style.bottom = `-${blockSize.height - 10}px`;
+            image.style.left = "4px";
+            image.style.bottom = `-${blockSize.height + 2.5}px`;
+            // image.style.left = `${imageMargin / 2}px`;
+            // image.style.bottom = `-${imageMargin / 2}px`;
         } else {
-            image.width = blockSize.width * tileCount - 10;
-            image.height = blockSize.height - 10;
-            image.style.top = "5px";
-            image.style.left = "5px";
+            image.width = blockSize.width * tileCount - 5;
+            image.height = blockSize.height - 5;
+            image.style.top = "2.5px";
+            image.style.left = "2.5px";
 
             // get the element with the min value in the chosenTiles to position the image from the left tile
             let tileEl = document.querySelector(`.${playerSide}${min}`);

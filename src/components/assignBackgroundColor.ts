@@ -1,3 +1,5 @@
+import { PlayerProps, SideType } from "../context/UserContext";
+import { getTileElement } from "../utlities/operationUtilities";
 
 type ResultType = {
     isTaken: boolean;
@@ -8,10 +10,12 @@ type ResultType = {
 
 const assignBackgroundColor = (
     tileNum: number,
-    playerSide: "player-side" | "opponent-side",
+    playerSide: SideType,
     isVertical: boolean,
     tileCount: number,
-    ): ResultType => {
+    playerTiles: PlayerProps[],
+    opponentTiles: PlayerProps[]
+): ResultType => {
     let tiles: number[] = [];
     let bgColor: "red" | "palegreen" = "red";
     let isTaken: boolean = false;
@@ -31,21 +35,15 @@ const assignBackgroundColor = (
     ];
 
     function checkIfTaken(tiles: number[]): boolean {
-        if (playerSide) {
-            return tiles.some(tile => {
-                let el = document.querySelector(`#${playerSide}${tile}`) as HTMLElement;
-                return el?.hasAttribute("taken");
-            })
-        } else {
-            return false;
-        }
+        const arrayEl = tiles.map((tile) => getTileElement(playerSide, tile));
+        return arrayEl.some((el) => el?.hasAttribute("taken"));
     }
-     
+
+    //
     switch (tileCount) {
         case 2:
             if (isVertical) {
                 tiles.push(tileNum - 10, tileNum);
-
                 // Check if any of the tiles exists in the playerTiles
                 isTaken = checkIfTaken(tiles);
 
@@ -132,7 +130,6 @@ const assignBackgroundColor = (
         default:
             break;
     }
-
     return { isTaken, bgColor, tiles };
 };
 
