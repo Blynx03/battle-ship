@@ -1,3 +1,13 @@
+# Battleship
+- Play the classic battleship game on a browser with singeplayer and multiplayer modes.
+
+# Starting the Development Environment
+- Clone this repository
+- cd to the project's root folder that contains package.json, src, etc.
+- Type the command ``npm install`` to install all of the necessary packages.
+- Type ``npm run dev``
+- The game will be available to run at http://localhost:5173/
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
